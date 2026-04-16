@@ -3,69 +3,860 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Star Crossed Travelers</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Sberbank Merchant Onboarding — DukPay PSP</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-alt: #f0f2f5;
+      --border: #d8dce5;
+      --text: #1a1d23;
+      --text-muted: #5a6075;
+      --accent: #1a5e3a;
+      --accent-light: #e8f4ee;
+      --accent-hover: #144d2e;
+      --sber-green: #21a038;
+      --pill-draft-bg: #f0f2f5;
+      --pill-draft-text: #5a6075;
+      --pill-pending-bg: #fff4e0;
+      --pill-pending-text: #8a5c00;
+      --pill-submitted-bg: #e8f0fe;
+      --pill-submitted-text: #1a4fa0;
+      --pill-clarification-bg: #fff0e8;
+      --pill-clarification-text: #8a3800;
+      --pill-approved-bg: #e8f4ee;
+      --pill-approved-text: #1a5e3a;
+      --pill-rejected-bg: #fce8e8;
+      --pill-rejected-text: #8a1a1a;
+      --pill-onhold-bg: #f4f0fe;
+      --pill-onhold-text: #4a2a8a;
+      --banner-bg: #e8f4ee;
+      --banner-border: #21a038;
+      --banner-text: #1a5e3a;
+      --rule-num: #21a038;
+      --shadow: 0 1px 4px rgba(0,0,0,0.08);
+      --shadow-md: 0 2px 12px rgba(0,0,0,0.10);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111318;
+        --surface: #1c1f27;
+        --surface-alt: #252830;
+        --border: #2e3140;
+        --text: #e4e7ef;
+        --text-muted: #8a90a8;
+        --accent: #34c468;
+        --accent-light: #1a2d22;
+        --accent-hover: #2db85c;
+        --sber-green: #34c468;
+        --pill-draft-bg: #252830;
+        --pill-draft-text: #8a90a8;
+        --pill-pending-bg: #2a2210;
+        --pill-pending-text: #d4a040;
+        --pill-submitted-bg: #101a30;
+        --pill-submitted-text: #6090e0;
+        --pill-clarification-bg: #2a1810;
+        --pill-clarification-text: #d47040;
+        --pill-approved-bg: #0f2018;
+        --pill-approved-text: #40c878;
+        --pill-rejected-bg: #280e0e;
+        --pill-rejected-text: #e06060;
+        --pill-onhold-bg: #1c1428;
+        --pill-onhold-text: #9060e0;
+        --banner-bg: #0f2018;
+        --banner-border: #34c468;
+        --banner-text: #40c878;
+        --rule-num: #34c468;
+        --shadow: 0 1px 4px rgba(0,0,0,0.3);
+        --shadow-md: 0 2px 12px rgba(0,0,0,0.4);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* ─── Header ─── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0 18px;
+    }
+
+    .sber-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--sber-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sber-logo svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff;
+    }
+
+    .header-titles h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+
+    .header-titles p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ─── Batch banner ─── */
+    .batch-banner {
+      background: var(--banner-bg);
+      border-left: 4px solid var(--banner-border);
+      color: var(--banner-text);
+      padding: 12px 32px;
+    }
+
+    .batch-banner-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .batch-banner-inner svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      fill: var(--banner-border);
+    }
+
+    /* ─── Main layout ─── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 36px 32px 64px;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── Cards grid ─── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+
+    .card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card-body h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .card-body p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .card-link svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ─── Rulebook ─── */
+    .rules-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rule-item:last-child {
+      border-bottom: none;
+    }
+
+    .rule-num {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--rule-num);
+      min-width: 24px;
+      padding-top: 1px;
+    }
+
+    .rule-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .rule-text strong {
+      color: var(--text);
+    }
+
+    /* ─── Email templates ─── */
+    .email-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .email-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .email-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+
+    .template-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--accent-light);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .email-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .email-card .use-for {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .email-card .subject-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      word-break: break-word;
+    }
+
+    /* ─── Status pills ─── */
+    .status-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 24px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .status-group {
+      margin-bottom: 22px;
+    }
+
+    .status-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-group-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 20px;
+      padding: 4px 12px 4px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .pill-desc {
+      font-weight: 400;
+      opacity: 0.75;
+      margin-left: 2px;
+    }
+
+    .pill.draft         { background: var(--pill-draft-bg);         color: var(--pill-draft-text); }
+    .pill.draft         .pill-dot { background: var(--pill-draft-text); }
+    .pill.pending       { background: var(--pill-pending-bg);       color: var(--pill-pending-text); }
+    .pill.pending       .pill-dot { background: var(--pill-pending-text); }
+    .pill.submitted     { background: var(--pill-submitted-bg);     color: var(--pill-submitted-text); }
+    .pill.submitted     .pill-dot { background: var(--pill-submitted-text); }
+    .pill.clarification { background: var(--pill-clarification-bg); color: var(--pill-clarification-text); }
+    .pill.clarification .pill-dot { background: var(--pill-clarification-text); }
+    .pill.approved      { background: var(--pill-approved-bg);      color: var(--pill-approved-text); }
+    .pill.approved      .pill-dot { background: var(--pill-approved-text); }
+    .pill.rejected      { background: var(--pill-rejected-bg);      color: var(--pill-rejected-text); }
+    .pill.rejected      .pill-dot { background: var(--pill-rejected-text); }
+    .pill.onhold        { background: var(--pill-onhold-bg);        color: var(--pill-onhold-text); }
+    .pill.onhold        .pill-dot { background: var(--pill-onhold-text); }
+
+    /* bank status variants */
+    .pill.not-submitted  { background: var(--pill-draft-bg);         color: var(--pill-draft-text); }
+    .pill.not-submitted  .pill-dot { background: var(--pill-draft-text); }
+    .pill.under-review   { background: var(--pill-submitted-bg);     color: var(--pill-submitted-text); }
+    .pill.under-review   .pill-dot { background: var(--pill-submitted-text); }
+    .pill.bank-approved  { background: var(--pill-approved-bg);      color: var(--pill-approved-text); }
+    .pill.bank-approved  .pill-dot { background: var(--pill-approved-text); }
+    .pill.bank-rejected  { background: var(--pill-rejected-bg);      color: var(--pill-rejected-text); }
+    .pill.bank-rejected  .pill-dot { background: var(--pill-rejected-text); }
+    .pill.clarif-req     { background: var(--pill-clarification-bg); color: var(--pill-clarification-text); }
+    .pill.clarif-req     .pill-dot { background: var(--pill-clarification-text); }
+
+    /* ─── Reference docs ─── */
+    .ref-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .ref-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s;
+    }
+
+    .ref-item:last-child { border-bottom: none; }
+    .ref-item:hover { background: var(--surface-alt); }
+
+    .ref-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ref-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .ref-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ref-content a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+    }
+
+    .ref-content a:hover { color: var(--accent); text-decoration: none; }
+
+    .ref-content span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .ref-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .tag-doc  { background: var(--accent-light);       color: var(--accent); }
+    .tag-csv  { background: var(--pill-submitted-bg);  color: var(--pill-submitted-text); }
+    .tag-tmpl { background: var(--pill-pending-bg);    color: var(--pill-pending-text); }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 18px 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      header, .batch-banner { padding-left: 16px; padding-right: 16px; }
+      main { padding: 24px 16px 48px; }
+      .cards, .email-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <div class="home">
-    <div class="stars"></div>
 
-    <div class="shooting-stars">
-      <div class="shot"></div>
-      <div class="shot"></div>
-      <div class="shot"></div>
-      <div class="shot"></div>
-      <div class="shot"></div>
-      <div class="shot"></div>
-    </div>
-
-    <div class="particles" id="particles"></div>
-
-    <!-- Girl scene -->
-    <div class="girl-scene" id="girl-scene">
-      <div class="girl-astronaut">
-        <div class="girl-bubble" id="girl-bubble"></div>
-
-        <div class="girl-astronaut-inner">
-          <div class="g-helmet"></div>
-          <div class="g-tank"></div>
-          <div class="g-suit"></div>
-          <div class="g-arm-l"></div>
-          <div class="g-arm-r"></div>
-          <div class="g-leg-l"></div>
-          <div class="g-leg-r"></div>
-        </div>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="sber-logo" aria-hidden="true">
+        <!-- Sber S mark (simplified) -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm3.5 13.5H9.5a.5.5 0 0 1-.5-.5v-1h6v1a.5.5 0 0 1-.5.5zm.5-3H8v-1h8v1zm-1-3H9.5a.5.5 0 0 1-.5-.5v-.5c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v.5a.5.5 0 0 1-.5.5z"/>
+        </svg>
       </div>
-
-      <div class="ice-cream">
-        <div class="ic-scoop"></div>
-        <div class="ic-cone"></div>
+      <div class="header-titles">
+        <h1>Sberbank Merchant Onboarding</h1>
+        <p>DukPay PSP — Internet Acquiring Operations</p>
       </div>
     </div>
+  </header>
 
-    <div class="content">
-      <h1>
-        <span>S</span><span>t</span><span>a</span><span>r</span><span>&nbsp;</span>
-        <span>C</span><span>r</span><span>o</span><span>s</span><span>s</span><span>e</span><span>d</span><span>&nbsp;</span>
-        <span>T</span><span>r</span><span>a</span><span>v</span><span>e</span><span>l</span><span>e</span><span>r</span><span>s</span>
-      </h1>
-
-      <div class="astronaut" id="astronaut">
-        <div class="astronaut-body" id="astronaut-body">
-        <div class="astro-bubble" id="astro-bubble"></div>
-        <div class="helmet"></div>
-        <div class="tank"></div>
-        <div class="suit"></div>
-        <div class="arm-l"></div>
-        <div class="arm-r"></div>
-        <div class="leg-l"></div>
-        <div class="leg-r"></div>
-      </div>
-
-      <button id="start-btn">Begin Journey</button>
+  <!-- Batch schedule banner -->
+  <div class="batch-banner" role="banner" aria-label="Batch schedule">
+    <div class="batch-banner-inner">
+      <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-3.5a.75.75 0 0 1 .75.75v3.19l1.9 1.1a.75.75 0 0 1-.75 1.3l-2.25-1.3A.75.75 0 0 1 7.25 9V5.25A.75.75 0 0 1 8 4.5z"/>
+      </svg>
+      Batches are submitted to Sberbank twice per week — <strong>&nbsp;Tuesday&nbsp;</strong> and <strong>&nbsp;Friday&nbsp;</strong> by 12:00. Ad-hoc submissions are not permitted without Operations Manager approval.
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <main>
+
+    <!-- Onboarding Templates -->
+    <section aria-labelledby="templates-heading">
+      <h2 class="section-title" id="templates-heading">Onboarding Templates</h2>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-icon">
+            <!-- table/grid icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18M3 15h18M9 3v18"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Merchant Registry Template</h3>
+            <p>Master CSV template for the central merchant registry. All merchant data, statuses, and submission history.</p>
+            <a class="card-link" href="templates/merchant_registry_template.csv" download>
+              Download CSV
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">
+            <!-- send/upload icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="16 16 12 12 8 16"/>
+              <line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Sberbank Batch Submission Template</h3>
+            <p>CSV template for the Tuesday/Friday batch file sent directly to Sberbank. Populate from registry records marked Ready for Batch.</p>
+            <a class="card-link" href="templates/sber_batch_template.csv" download>
+              Download CSV
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">
+            <!-- checklist icon -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Pre-Batch Checklist</h3>
+            <p>Complete before every Tuesday and Friday batch. Covers duplicate checks, login/MID checks, channel validation, and post-dispatch registry updates.</p>
+            <a class="card-link" href="docs/merchant_onboarding_checklist.md">
+              Open checklist
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Rulebook -->
+    <section aria-labelledby="rules-heading">
+      <h2 class="section-title" id="rules-heading">Rulebook — Mandatory Business Rules</h2>
+      <div class="rules-list" role="list">
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">1</span>
+          <span class="rule-text"><strong>One merchant, one entity.</strong> A single business entity may only be registered once with Sberbank through DukPay.</span>
+        </div>
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">2</span>
+          <span class="rule-text"><strong>One Merchant ID, one login per merchant.</strong> Duplicate Merchant IDs or duplicate logins for the same entity are not permitted.</span>
+        </div>
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">3</span>
+          <span class="rule-text"><strong>Website and mobile app belong to the same merchant.</strong> Both channels must be registered under the same merchant entity — never as two separate registrations.</span>
+        </div>
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">4</span>
+          <span class="rule-text"><strong>New channels for an existing merchant are handled as updates.</strong> Adding a website or app to an existing record is an <code>UPDATE</code> action, not a <code>NEW</code> registration.</span>
+        </div>
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">5</span>
+          <span class="rule-text"><strong>All submissions are batched — Tuesday and Friday only.</strong> Ad-hoc individual submissions to Sberbank are not permitted except in exceptional circumstances approved by the Operations Manager.</span>
+        </div>
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">6</span>
+          <span class="rule-text"><strong>Onboarding and issue threads are kept strictly separate.</strong> Batch submissions and clarification/issue exchanges must never be mixed in the same email thread.</span>
+        </div>
+
+        <div class="rule-item" role="listitem">
+          <span class="rule-num">7</span>
+          <span class="rule-text"><strong>The merchant registry is the single source of truth.</strong> All data, statuses, and history live in the central registry. No other record takes precedence. Duplicate checks are mandatory before every batch.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Email Templates -->
+    <section aria-labelledby="email-heading">
+      <h2 class="section-title" id="email-heading">Email Thread Templates</h2>
+      <div class="email-grid">
+
+        <div class="email-card">
+          <div class="template-badge">A</div>
+          <h3>Batch Onboarding Submission</h3>
+          <p class="use-for">Use for: Tuesday and Friday batch submissions. Dedicated submission thread — do not use for issue follow-up.</p>
+          <div class="subject-line">DukPay — Merchant Onboarding Batch — [Batch Date]</div>
+          <a class="card-link" href="docs/email_templates.md#template-a--batch-onboarding-submission">
+            View template
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <div class="email-card">
+          <div class="template-badge">B</div>
+          <h3>Follow-Up on Pending Batch</h3>
+          <p class="use-for">Use for: Following up when no acknowledgement or status update received within the expected timeframe. Reply in the original batch thread.</p>
+          <div class="subject-line">RE: DukPay — Merchant Onboarding Batch — [Original Batch Date]</div>
+          <a class="card-link" href="docs/email_templates.md#template-b--follow-up-on-pending-batch">
+            View template
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <div class="email-card">
+          <div class="template-badge">C</div>
+          <h3>Clarification / Issue Resolution</h3>
+          <p class="use-for">Use for: Responding to Sberbank clarification requests or rejections. Always in a <strong>new, separate thread</strong> — never reply to the batch thread.</p>
+          <div class="subject-line">DukPay — Merchant Clarification — [Merchant Name] — [Date]</div>
+          <a class="card-link" href="docs/email_templates.md#template-c--clarification--issue-resolution">
+            View template
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+        <div class="email-card">
+          <div class="template-badge">D</div>
+          <h3>Update to Existing Merchant</h3>
+          <p class="use-for">Use for: Standalone update notification outside the batch cycle (e.g. adding a mobile app, changing a URL). Most updates go via batch CSV with Action_Type = UPDATE.</p>
+          <div class="subject-line">DukPay — Merchant Update Notification — [Merchant Name] — [Date]</div>
+          <a class="card-link" href="docs/email_templates.md#template-d--update-to-existing-merchant">
+            View template
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Merchant Status Reference -->
+    <section aria-labelledby="status-heading">
+      <h2 class="section-title" id="status-heading">Merchant Status Reference</h2>
+      <div class="status-section">
+
+        <div class="status-group">
+          <div class="status-group-label">Internal Status (DukPay)</div>
+          <div class="pills">
+            <span class="pill draft"><span class="pill-dot"></span>Draft<span class="pill-desc">— collected, not yet validated</span></span>
+            <span class="pill pending"><span class="pill-dot"></span>Pending Submission<span class="pill-desc">— validated, ready for next batch</span></span>
+            <span class="pill submitted"><span class="pill-dot"></span>Submitted<span class="pill-desc">— sent to Sberbank, awaiting response</span></span>
+            <span class="pill clarification"><span class="pill-dot"></span>Pending Clarification<span class="pill-desc">— awaiting bank or merchant response</span></span>
+            <span class="pill approved"><span class="pill-dot"></span>Approved<span class="pill-desc">— confirmed registered by Sberbank</span></span>
+            <span class="pill rejected"><span class="pill-dot"></span>Rejected<span class="pill-desc">— rejected; requires review</span></span>
+            <span class="pill onhold"><span class="pill-dot"></span>On Hold<span class="pill-desc">— paused for internal or merchant reasons</span></span>
+          </div>
+        </div>
+
+        <div class="status-group">
+          <div class="status-group-label">Bank Status (Sberbank response)</div>
+          <div class="pills">
+            <span class="pill not-submitted"><span class="pill-dot"></span>Not Submitted<span class="pill-desc">— not yet sent to bank</span></span>
+            <span class="pill under-review"><span class="pill-dot"></span>Under Review<span class="pill-desc">— submitted, no response yet</span></span>
+            <span class="pill bank-approved"><span class="pill-dot"></span>Approved<span class="pill-desc">— bank confirmed registration</span></span>
+            <span class="pill bank-rejected"><span class="pill-dot"></span>Rejected<span class="pill-desc">— bank rejected; see Bank_Comment</span></span>
+            <span class="pill clarif-req"><span class="pill-dot"></span>Clarification Requested<span class="pill-desc">— bank requires additional information</span></span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Reference Docs -->
+    <section aria-labelledby="refs-heading">
+      <h2 class="section-title" id="refs-heading">Reference Documents</h2>
+      <div class="ref-list" role="list">
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="docs/merchant_onboarding_guide.md">Merchant Onboarding Guide</a>
+            <span>End-to-end operations guide — batch model, registry rules, duplicate prevention, status management, escalation paths</span>
+          </div>
+          <span class="ref-tag tag-doc">Guide</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="docs/email_templates.md">Email Templates</a>
+            <span>All four standard email templates (A/B/C/D) with subject lines and placeholder instructions</span>
+          </div>
+          <span class="ref-tag tag-doc">Guide</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="docs/merchant_onboarding_checklist.md">Pre-Batch Checklist</a>
+            <span>9-section checklist: duplicates, logins, Merchant IDs, channels, mandatory fields, action types, email threads, owners, post-dispatch updates</span>
+          </div>
+          <span class="ref-tag tag-doc">Checklist</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="templates/merchant_registry_template.csv" download>Merchant Registry Template</a>
+            <span>Central registry CSV — all merchant records, statuses, owners, and submission history</span>
+          </div>
+          <span class="ref-tag tag-csv">CSV</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="templates/sber_batch_template.csv" download>Sberbank Batch Submission Template</a>
+            <span>Batch CSV sent to Sberbank on Tuesday/Friday — extracted from registry records where Ready_for_Batch = YES</span>
+          </div>
+          <span class="ref-tag tag-csv">CSV</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="docs/process_flow.md">Process Flow</a>
+            <span>Step-by-step operational process diagram and flow description</span>
+          </div>
+          <span class="ref-tag tag-doc">Guide</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="docs/decision_log.md">Decision Log</a>
+            <span>Record of key operational and process decisions, rationale, and dates</span>
+          </div>
+          <span class="ref-tag tag-doc">Log</span>
+        </div>
+
+        <div class="ref-item" role="listitem">
+          <div class="ref-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div class="ref-content">
+            <a href="docs/change_log.md">Change Log</a>
+            <span>Version history and changelog for all documents and templates in this pack</span>
+          </div>
+          <span class="ref-tag tag-doc">Log</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    DukPay PSP — Sberbank Internet Acquiring Operations &nbsp;·&nbsp; Internal use only
+  </footer>
+
 </body>
 </html>
